@@ -41,6 +41,25 @@ describe('SolicitacaoEmprestimo - regras de dominio', () => {
     expect(() => nova().aprovar('analista-1', 0, 'Aprovado')).toThrow(RegraDeNegocioError);
   });
 
+  it('impede aprovacao quando a parcela estimada supera 30% da renda', () => {
+    const solicitacao = nova();
+    expect(() => solicitacao.aprovar('analista-1', 40000, 'Credito aprovado')).toThrow(RegraDeNegocioError);
+    expect(solicitacao.status).toBe(StatusSolicitacao.PENDENTE);
+    expect(solicitacao.analise).toBeUndefined();
+  });
+
+  it('permite aprovacao no limite de 30% da renda', () => {
+    const solicitacao = nova();
+
+    solicitacao.valorSolicitado = 32400;
+    solicitacao.rendaMensal = 3000;
+    solicitacao.prazoMeses = 36;
+
+    solicitacao.aprovar('analista-1', 32400, 'Credito aprovado');
+
+    expect(solicitacao.status).toBe(StatusSolicitacao.APROVADA);
+  });
+
   it('exige parecer na analise', () => {
     expect(() => nova().reprovar('analista-1', '   ')).toThrow(RegraDeNegocioError);
   });

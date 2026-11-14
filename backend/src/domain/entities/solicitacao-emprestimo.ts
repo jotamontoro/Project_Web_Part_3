@@ -36,6 +36,11 @@ export class SolicitacaoEmprestimo implements SolicitacaoProps {
     this.validarAnalista(analistaId);
     if (!Number.isFinite(valorAprovado) || valorAprovado <= 0 || valorAprovado > this.valorSolicitado)
       throw new RegraDeNegocioError('O valor aprovado deve ser maior que zero e não pode superar o valor solicitado.');
+    // Regra simplificada do CredFácil: parcela sem juros de até 30% da renda mensal.
+    // Não representa uma simulação bancária real (não inclui juros ou tarifas).
+    const parcelaEstimada = valorAprovado / this.prazoMeses;
+    if (parcelaEstimada > this.rendaMensal * 0.30)
+      throw new RegraDeNegocioError('A parcela estimada supera 30% da renda mensal do solicitante.');
     this.registrarAnalise(analistaId, true, parecer, valorAprovado);
   }
   reprovar(analistaId: string, parecer: string): void {
@@ -53,7 +58,7 @@ export class SolicitacaoEmprestimo implements SolicitacaoProps {
     if (this.solicitanteId === analistaId) throw new PermissaoNegadaError('Você não pode analisar sua própria solicitação.');
   }
   private registrarAnalise(analistaId: string, aprovada: boolean, parecer: string, valorAprovado?: number): void {
-    if (!parecer?.trim()) throw new RegraDeNegocioError('O parecer da análise é obrigatório.');
+    if (!parecer?.trim() || parecer.trim().length < 3) throw new RegraDeNegocioError('O parecer da análise deve conter pelo menos 3 caracteres.');
     const instante = new Date().toISOString();
     this.status = aprovada ? StatusSolicitacao.APROVADA : StatusSolicitacao.REPROVADA;
     this.analise = { analistaId, aprovada, valorAprovado, parecer: parecer.trim(), analisadaEm: instante };
