@@ -1,0 +1,2 @@
+import { createParamDecorator, ExecutionContext, BadRequestException } from '@nestjs/common';
+export const UsuarioId = createParamDecorator((_data: unknown, ctx: ExecutionContext): string => { const id = ctx.switchToHttp().getRequest<{ headers: Record<string,string> }>().headers['x-user-id']; if (!id?.trim()) throw new BadRequestException('O header x-user-id é obrigatório.'); return id.trim(); });
