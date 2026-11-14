@@ -11,7 +11,7 @@ export class SolicitacoesController {
   constructor(private readonly criarCaso: CriarSolicitacaoUseCase, private readonly listarCaso: ListarSolicitacoesUseCase, private readonly buscarCaso: BuscarSolicitacaoUseCase, private readonly atualizarCaso: AtualizarSolicitacaoUseCase, private readonly excluirCaso: ExcluirSolicitacaoUseCase) {}
   @Post() criar(@UsuarioId() id: string, @Body() dto: SolicitacaoDto) { return this.criarCaso.executar(id, dto); }
   @Get() listar(@UsuarioId() id: string) { return this.listarCaso.executar(id); }
-  @Get(':id') buscar(@Param('id', ParseUUIDPipe) id: string) { return this.buscarCaso.executar(id); }
+  @Get(':id') buscar(@Param('id', ParseUUIDPipe) id: string, @UsuarioId() usuarioId: string) { return this.buscarCaso.executar(id, usuarioId); }
   @Put(':id') atualizar(@Param('id', ParseUUIDPipe) id: string, @UsuarioId() usuarioId: string, @Body() dto: SolicitacaoDto) { return this.atualizarCaso.executar(id, usuarioId, dto); }
   @Delete(':id') @HttpCode(HttpStatus.NO_CONTENT) excluir(@Param('id', ParseUUIDPipe) id: string, @UsuarioId() usuarioId: string) { return this.excluirCaso.executar(id, usuarioId); }
 }

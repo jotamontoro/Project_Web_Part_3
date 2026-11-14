@@ -10,7 +10,7 @@ async function requisicao<T>(caminho: string, opcoes: RequestInit = {}): Promise
 function headersUsuario(id: string) { return { "Content-Type": "application/json", "x-user-id": id }; }
 export function criarSolicitacao(id: string, dados: DadosSolicitacao) { return requisicao<SolicitacaoEmprestimo>("/solicitacoes", { method: "POST", headers: headersUsuario(id), body: JSON.stringify(dados) }); }
 export function listarMinhasSolicitacoes(id: string) { return requisicao<SolicitacaoEmprestimo[]>("/solicitacoes", { headers: headersUsuario(id) }); }
-export function buscarSolicitacao(id: string) { return requisicao<SolicitacaoEmprestimo>(`/solicitacoes/${id}`); }
+export function buscarSolicitacao(id: string, usuarioId: string) { return requisicao<SolicitacaoEmprestimo>(`/solicitacoes/${id}`, { headers: headersUsuario(usuarioId) }); }
 export function atualizarSolicitacao(id: string, usuarioId: string, dados: DadosSolicitacao) { return requisicao<SolicitacaoEmprestimo>(`/solicitacoes/${id}`, { method: "PUT", headers: headersUsuario(usuarioId), body: JSON.stringify(dados) }); }
 export function excluirSolicitacao(id: string, usuarioId: string) { return requisicao<void>(`/solicitacoes/${id}`, { method: "DELETE", headers: headersUsuario(usuarioId) }); }
 export function buscarFila() { return requisicao<SolicitacaoEmprestimo[]>("/analise-credito/fila", { headers: { "x-role": "ANALISTA" } }); }
