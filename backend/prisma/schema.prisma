@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Solicitacao {
+  id                   String   @id @db.Uuid
+  solicitanteId        String
+  nomeCompleto         String
+  rendaMensal          Decimal  @db.Decimal(14, 2)
+  valorSolicitado      Decimal  @db.Decimal(14, 2)
+  prazoMeses           Int
+  situacaoProfissional String
+  finalidade           String
+  observacoes          String?
+  status               String   @default("PENDENTE")
+  criadaEm             DateTime @default(now())
+  atualizadaEm         DateTime?
+  analistaId           String?
+  aprovada             Boolean?
+  valorAprovado        Decimal? @db.Decimal(14, 2)
+  parecer              String?
+  analisadaEm          DateTime?
+  auditorias           Auditoria[]
+
+  @@map("credfacil_solicitacoes")
+}
+
+model Auditoria {
+  idRegistro     String   @id @db.Uuid
+  solicitacaoId  String   @db.Uuid
+  estadoAnterior String
+  novoEstado     String
+  autorId        String
+  justificativa  String
+  timestamp      DateTime
+  solicitacao    Solicitacao @relation(fields: [solicitacaoId], references: [id], onDelete: Restrict)
+
+  @@index([solicitacaoId])
+  @@map("credfacil_auditorias")
+}

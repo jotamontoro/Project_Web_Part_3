@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { SolicitacaoRepository } from '../../domain/repositories/solicitacao.repository.js';
-import { JsonDatabaseService } from './json-database.service.js';
-import { JsonSolicitacaoRepository } from './json-solicitacao.repository.js';
-@Module({ providers: [JsonDatabaseService, { provide: SolicitacaoRepository, useClass: JsonSolicitacaoRepository }], exports: [JsonDatabaseService, SolicitacaoRepository] })
+import { PrismaSolicitacaoRepository } from './prisma-solicitacao.repository.js';
+@Module({ providers: [{ provide: SolicitacaoRepository, useClass: PrismaSolicitacaoRepository }], exports: [SolicitacaoRepository] })
 export class DatabaseModule {}
